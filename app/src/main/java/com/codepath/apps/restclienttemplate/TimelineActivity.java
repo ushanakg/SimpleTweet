@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,20 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApp.getRestClient(this);
 
+        // Configure the refreshing colors
+        timelineBinding.swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        timelineBinding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i(TAG, "Timeline refreshed");
+
+                populateHomeTimeline();
+            }
+        });
+
         // RecyclerView can be found at: timelineBinding.rvTweets
         // Initiate the list of tweets and adapter
         tweetList = new ArrayList<>();
@@ -53,11 +68,13 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 Log.i(TAG, "onSuccess! " + json.toString());
 
-                // after receiving tweets from get request, add them to tweetList to populate timeline
+                // after receiving tweets from get request, update tweetList to populate timeline
                 JSONArray jsonArray = json.jsonArray;
                 try {
-                    tweetList.addAll(Tweet.fromJsonArray(jsonArray));
-                    adapter.notifyDataSetChanged();
+                    adapter.clear();
+                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
+                    // Refresh is finished
+                    timelineBinding.swipeContainer.setRefreshing(false);
                 } catch (JSONException e) {
                     Log.e(TAG, "Converting JSONArray to tweetList failed", e);
                 }
