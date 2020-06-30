@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -23,9 +24,8 @@ public class Tweet {
     private String body;
     private String createdAt;
     private User user;
-    private String relativeTimeAgo;
-
-    // Empty constructure for the Parceler library
+    private long id;
+    // Empty constructor for the Parceler library
     public Tweet() {
 
     }
@@ -37,7 +37,7 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-
+        tweet.id = jsonObject.getLong("id");
         return tweet;
     }
 
@@ -63,7 +63,7 @@ public class Tweet {
     }
 
     // Get how long ago the tweet was posted
-    public String getRelativeTimeAgo() {
+    public String getRelativeTimeAgo(Context context) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
@@ -71,15 +71,29 @@ public class Tweet {
         String relativeDate = "";
         try {
             long dateMillis = sf.parse(createdAt).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            String[] split = relativeDate.split(" ");
+            if (DateUtils.isToday(dateMillis)) {
+                relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                String[] split = relativeDate.split(" ");
 
-            relativeDate = split[0] + split[1].substring(0,1);
+                Log.d(Tweet.class.getSimpleName(), "Relative time: " + relativeDate);
+                relativeDate = split[0] + split[1].substring(0,1);
+            } else {
+                relativeDate = DateUtils.formatDateTime(context, dateMillis, DateUtils.FORMAT_ABBREV_MONTH);
+                String[] split = relativeDate.split(",");
+                relativeDate = split[0];
+                Log.d(Tweet.class.getSimpleName(), "Relative time: " + relativeDate);
+
+            }
+
 
         } catch (ParseException e) {
             Log.e(Tweet.class.getSimpleName(), "Calculating relative time ago failed", e);
         }
 
         return relativeDate;
+    }
+
+    public long getId() {
+        return id;
     }
 }

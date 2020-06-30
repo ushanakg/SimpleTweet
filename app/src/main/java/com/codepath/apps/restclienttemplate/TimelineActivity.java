@@ -35,6 +35,7 @@ public class TimelineActivity extends AppCompatActivity {
     ActivityTimelineBinding timelineBinding;
     List<Tweet> tweetList;
     TweetsAdapter adapter;
+    EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +64,21 @@ public class TimelineActivity extends AppCompatActivity {
         // Initiate the list of tweets and adapter
         tweetList = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweetList);
+
         // Setup recycler view by setting layout manager and adapter
-        timelineBinding.rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        timelineBinding.rvTweets.setLayoutManager(layoutManager);
         timelineBinding.rvTweets.setAdapter(adapter);
+
+        // Add scrollListener to RecyclerView for infinite pagination
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "onLoadMore: " + page);
+                loadMoreData();
+            }
+        };
+        timelineBinding.rvTweets.addOnScrollListener(scrollListener);
 
         populateHomeTimeline();
     }
@@ -128,6 +141,34 @@ public class TimelineActivity extends AppCompatActivity {
             timelineBinding.rvTweets.smoothScrollToPosition(0);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // Loads more tweets as the user scrolls, allowing an infinite timeline
+    public void loadMoreData() {
+        // Send an API request to get appropriate data
+        client.getNextPageOfTweets(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "onSuccess for loadMoreData" + json.toString());
+
+                try {
+                    // Construct new models from the JSON response
+                    List<Tweet> newTweets = Tweet.fromJsonArray(json.jsonArray);
+                    // Append the new tweets to the existing list of tweets + notify the adapter
+                    adapter.addAll(newTweets);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onFailure for loadMoreData", throwable);
+
+            }
+        }, tweetList.get(tweetList.size() - 1).getId());
+
     }
 
 }
