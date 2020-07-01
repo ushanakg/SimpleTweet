@@ -60,6 +60,8 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
+        setSupportActionBar(timelineBinding.toolbar);
+
         // RecyclerView can be found at: timelineBinding.rvTweets
         // Initiate the list of tweets and adapter
         tweetList = new ArrayList<>();

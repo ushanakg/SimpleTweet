@@ -38,7 +38,6 @@ public class Tweet {
         Tweet tweet = new Tweet();
 
         tweet.body = jsonObject.getString("text").split(" https")[0];
-        Log.i(Tweet.class.getSimpleName(), "Body: " + tweet.body);
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.id = jsonObject.getLong("id");

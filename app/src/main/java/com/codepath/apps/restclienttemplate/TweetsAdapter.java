@@ -79,7 +79,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public void bind(Tweet tweet) {
             tweetView.tvBody.setText(tweet.getBody());
-            tweetView.tvScreenName.setText(tweet.getUser().getScreenName());
+            tweetView.tvName.setText(tweet.getUser().getName());
+            tweetView.tvScreenName.setText("@" + tweet.getUser().getScreenName());
             tweetView.tvRelativeTimeAgo.setText(tweet.getRelativeTimeAgo(context));
             //load profile pic using Glide
             Glide.with(context).load(tweet.getUser().getPublicImageUrl()).transform(new RoundedCorners(90)).into(tweetView.ivProfileImage);
