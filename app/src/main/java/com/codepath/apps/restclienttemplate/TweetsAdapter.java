@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -9,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -79,7 +82,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tweetView.tvScreenName.setText(tweet.getUser().getScreenName());
             tweetView.tvRelativeTimeAgo.setText(tweet.getRelativeTimeAgo(context));
             //load profile pic using Glide
-            Glide.with(context).load(tweet.getUser().getPublicImageUrl()).into(tweetView.ivProfileImage);
+            Glide.with(context).load(tweet.getUser().getPublicImageUrl()).transform(new RoundedCorners(90)).into(tweetView.ivProfileImage);
+
+            //load media
+            Glide.with(context).clear(tweetView.ivMedia);
+            List<String> tweetMedia = tweet.getMedia();
+            if (tweetMedia.size() > 0) {
+                Glide.with(context).load(tweet.getMedia().get(0)).transform(new RoundedCorners(65)).into(tweetView.ivMedia);
+            }
         }
     }
 

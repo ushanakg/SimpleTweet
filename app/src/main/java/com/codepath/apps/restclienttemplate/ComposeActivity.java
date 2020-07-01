@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,7 +23,8 @@ import okhttp3.Headers;
 public class ComposeActivity extends AppCompatActivity {
 
     private static final String TAG = ComposeActivity.class.getSimpleName();
-    public static final int MAX_TWEET_LENGTH = 140;
+    public static final int MAX_TWEET_LENGTH = 280;
+    private TextWatcher characterCounter;
 
     TwitterClient client;
 
@@ -32,6 +35,21 @@ public class ComposeActivity extends AppCompatActivity {
         setContentView(composeBinding.getRoot());
 
         client = TwitterApp.getRestClient(this);
+
+        //Set up character counter
+        characterCounter = new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //This sets textview to the current length
+                composeBinding.tvCharacterCount.setText(String.valueOf(s.length()) + "/" + MAX_TWEET_LENGTH);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        };
+        composeBinding.etCompose.addTextChangedListener(characterCounter);
+
 
         //Add a click listener to the button
         composeBinding.btnTweet.setOnClickListener(new View.OnClickListener() {
