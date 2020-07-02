@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
 
 import org.parceler.Parcels;
@@ -30,9 +33,15 @@ public class TweetDetailsActivity extends AppCompatActivity {
 
         Log.d("TweetDetailsActivity", tweet.getBody());
 
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
         binding.tvBody.setText(tweet.getBody());
         binding.tvName.setText(tweet.getUser().getName());
         binding.tvScreenName.setText("@" + tweet.getUser().getScreenName());
+        binding.tvDateTime.setText(tweet.getTimePosted( this) + "  ·  " + tweet.getDatePosted(this));
         //binding.tvRelativeTimeAgo.setText(tweet.getRelativeTimeAgo(context));
         //load profile pic using Glide
         Glide.with(this).load(tweet.getUser().getPublicImageUrl()).transform(new RoundedCorners(90)).into(binding.ivProfileImage);
@@ -42,5 +51,13 @@ public class TweetDetailsActivity extends AppCompatActivity {
         if (tweet.getMedia() != "") {
             Glide.with(this).load(tweet.getMedia()).transform(new RoundedCorners(65)).into(binding.ivMedia0);
         }
+
+        binding.ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
+
 }

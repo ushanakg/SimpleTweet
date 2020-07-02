@@ -1,18 +1,26 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ActivityComposeBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONException;
@@ -20,22 +28,44 @@ import org.parceler.Parcels;
 
 import okhttp3.Headers;
 
-public class ComposeActivity extends AppCompatActivity {
+public class ComposeActivityFragment extends DialogFragment {
 
-    private static final String TAG = ComposeActivity.class.getSimpleName();
+    private static final String TAG = ComposeActivityFragment.class.getSimpleName();
     public static final int MAX_TWEET_LENGTH = 280;
     private TextWatcher characterCounter;
+    private User user;
+    private TwitterClient client;
 
-    TwitterClient client;
+    private ActivityComposeBinding composeBinding;
+
+    // Empty for DialogFragment
+    public ComposeActivityFragment() {
+
+    }
+
+    public static ComposeActivityFragment newInstance(User user) {
+        ComposeActivityFragment frag = new ComposeActivityFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", Parcels.wrap(user));
+        frag.setArguments(args);
+        return frag;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final ActivityComposeBinding composeBinding = ActivityComposeBinding.inflate(getLayoutInflater());
-        setContentView(composeBinding.getRoot());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        composeBinding = ActivityComposeBinding.inflate(getLayoutInflater(), container, false);
+        View view = composeBinding.getRoot();
+        return view;
+    }
 
-        client = TwitterApp.getRestClient(this);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        this.user = Parcels.unwrap(getArguments().getParcelable("user"));
+
+        client = TwitterApp.getRestClient(view.getContext());
+        
         //Set up character counter
         characterCounter = new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -48,6 +78,7 @@ public class ComposeActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) { }
         };
+
         composeBinding.etCompose.addTextChangedListener(characterCounter);
 
 
@@ -55,12 +86,13 @@ public class ComposeActivity extends AppCompatActivity {
         composeBinding.btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String tweetContent = composeBinding.etCompose.getText().toString();
                 if (tweetContent.isEmpty()) {
-                    Toast.makeText(ComposeActivity.this, "Sorry, your tweet cannot be empty.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(view.getContext(), "Sorry, your tweet cannot be empty.", Toast.LENGTH_LONG).show();
                     return;
                 } else if (tweetContent.length() > MAX_TWEET_LENGTH) {
-                    Toast.makeText(ComposeActivity.this, "Sorry, your tweet is too long.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(view.getContext(), "Sorry, your tweet is too long.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 // Valid tweet, Make an API call to Twitter to publish the tweet
@@ -75,8 +107,7 @@ public class ComposeActivity extends AppCompatActivity {
                             // send the contents of the published tweet back to be displayed in the RecyclerView
                             Intent i = new Intent();
                             i.putExtra("tweet", Parcels.wrap(tweet));
-                            setResult(RESULT_OK, i);
-                            finish();
+                            dismiss();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -91,6 +122,9 @@ public class ComposeActivity extends AppCompatActivity {
             }
         });
 
-    }
 
+        composeBinding.etCompose.requestFocus();
+        getDialog().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
 }

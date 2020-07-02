@@ -1,7 +1,9 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -12,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -23,6 +24,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class TimelineActivity extends AppCompatActivity {
     private TweetsAdapter adapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private TweetDao tweetDao;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +64,16 @@ public class TimelineActivity extends AppCompatActivity {
         timelineBinding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "Timeline refreshed");
                 populateHomeTimeline();
             }
         });
 
         setSupportActionBar(timelineBinding.toolbar);
+        final ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
+        ab.setLogo(R.drawable.circle_cropped);
+        ab.setDisplayUseLogoEnabled(true);
+
 
         // RecyclerView can be found at: timelineBinding.rvTweets
         // Initiate the list of tweets and adapter
@@ -82,7 +89,6 @@ public class TimelineActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Log.i(TAG, "onLoadMore: " + page);
                 loadMoreData();
             }
         };
@@ -98,6 +104,7 @@ public class TimelineActivity extends AppCompatActivity {
                 adapter.addAll(tweetsFromDB);
             }
         });
+
         // get request using Twitter API
         populateHomeTimeline();
     }
@@ -107,7 +114,6 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "onSuccess! " + json.toString());
 
                 // after receiving tweets from get request, update tweetList to populate timeline
                 JSONArray jsonArray = json.jsonArray;
@@ -122,7 +128,6 @@ public class TimelineActivity extends AppCompatActivity {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i("TimelineActivity", "saving tweets to database (hopefully)");
                             List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
 
                             tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
@@ -152,13 +157,15 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
-            //Compose item has been selected
-            // Navigate to composition activity
-            Intent i = new Intent(this, ComposeActivity.class);
-            startActivityForResult(i, REQUEST_CODE);
-            return true;
+            showComposeDialog();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showComposeDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(user);
+        composeActivityFragment.show(fm, "compose fragment");
     }
 
     // When the compose activity finishes, this function will handle the result

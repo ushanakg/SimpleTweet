@@ -18,13 +18,28 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:fontFamily="sans-serif-black"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        tools:text="Ushana" />
+
+    <TextView
         android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/tvName"
+        android:textColor="#AAB8C2"
+        android:textSize="16sp"
         tools:text="ushanakg" />
 
     <TextView
@@ -33,10 +48,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvScreenName"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:autoLink="all"
         android:linksClickable="true"
+        android:textColor="#000000"
+        android:textSize="16sp"
         tools:text="$$$" />
 
     <TextView
@@ -47,31 +64,33 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="4dp"
+        android:textColor="#AAB8C2"
         tools:text="8m" />
 
-    <ImageView
-        android:id="@+id/ivMedia"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/cvMedia"
+        app:cardElevation="0dp"
         android:layout_below="@+id/tvBody"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        android:adjustViewBounds="true"
-        android:maxHeight="250dp"
-        android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        app:cardCornerRadius="18dp">
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/ivProfileImage"
-        android:fontFamily="sans-serif-black"
-        tools:text="Ushana" />
+        <ImageView
+            android:id="@+id/ivMedia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="250dp"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    </androidx.cardview.widget.CardView>
+
+
+
 </RelativeLayout>

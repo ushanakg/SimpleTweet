@@ -94,6 +94,40 @@ public class Tweet {
         return user;
     }
 
+    public String getTimePosted(Context context) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String time = "";
+        try {
+            long dateMillis = sf.parse(createdAt).getTime();
+            time = DateUtils.formatDateTime(context, dateMillis, DateUtils.FORMAT_SHOW_TIME);
+
+        } catch (ParseException e) {
+            Log.e(Tweet.class.getSimpleName(), "Calculating time posted failed", e);
+        }
+        return time;
+    }
+
+    public String getDatePosted(Context context) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String date = "";
+        try {
+            long dateMillis = sf.parse(createdAt).getTime();
+            date = DateUtils.formatDateTime(context, dateMillis, DateUtils.FORMAT_NUMERIC_DATE);
+            String full_date = DateUtils.formatDateTime(context, dateMillis, DateUtils.FORMAT_SHOW_YEAR);
+            date = date + "/" + full_date.substring(full_date.length() - 2);
+
+        } catch (ParseException e) {
+            Log.e(Tweet.class.getSimpleName(), "Calculating time posted failed", e);
+        }
+        return date;
+    }
+
     // Get how long ago the tweet was posted
     public String getRelativeTimeAgo(Context context) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
