@@ -40,6 +40,10 @@ android {
     }
 }
 
+ext {
+    roomVersion = "2.1.0"
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
     implementation 'com.codepath.libraries:android-oauth-handler:2.2.0'
@@ -59,5 +63,7 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.12'
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.google.android.material:material:1.0.0-rc01'
-    implementation 'com.felipecsl.asymmetricgridview:library:2.0.1'
+    // Room for simple persistence with an ORM
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
 }

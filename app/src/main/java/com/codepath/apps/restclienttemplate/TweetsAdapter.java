@@ -90,9 +90,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             //load media
             Glide.with(context).clear(tweetBinding.ivMedia);
-            List<String> tweetMedia = tweet.getMedia();
-            if (tweetMedia.size() > 0) {
-                Glide.with(context).load(tweet.getMedia().get(0)).transform(new RoundedCorners(65)).into(tweetBinding.ivMedia);
+            if (tweet.getMedia() != "") {
+                Glide.with(context).load(tweet.getMedia()).transform(new RoundedCorners(65)).into(tweetBinding.ivMedia);
             }
         }
 

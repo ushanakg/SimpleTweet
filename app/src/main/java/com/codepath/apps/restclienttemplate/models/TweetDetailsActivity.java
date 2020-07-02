@@ -1,9 +1,6 @@
 package com.codepath.apps.restclienttemplate.models;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +9,6 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
-import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 
 import org.parceler.Parcels;
 
@@ -45,9 +39,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
 
         //load media
         Glide.with(this).clear(binding.ivMedia0);
-        List<String> tweetMedia = tweet.getMedia();
-        if (tweetMedia.size() > 0) {
-            Glide.with(this).load(tweet.getMedia().get(0)).transform(new RoundedCorners(65)).into(binding.ivMedia0);
+        if (tweet.getMedia() != "") {
+            Glide.with(this).load(tweet.getMedia()).transform(new RoundedCorners(65)).into(binding.ivMedia0);
         }
     }
 }

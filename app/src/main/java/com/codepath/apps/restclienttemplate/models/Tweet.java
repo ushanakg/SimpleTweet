@@ -4,6 +4,11 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 import androidx.versionedparcelable.ParcelField;
 
 import org.json.JSONArray;
@@ -20,13 +25,27 @@ import java.util.Locale;
 
 // model that holds all the essential information of a tweet
 @Parcel
+@Entity(foreignKeys = @ForeignKey(entity=User.class, parentColumns="id", childColumns="userId"))
 public class Tweet {
 
-    private String body;
-    private String createdAt;
-    private User user;
+    @ColumnInfo
+    @PrimaryKey
     private long id;
-    private List<String> media;
+
+    @ColumnInfo
+    private String body;
+
+    @ColumnInfo
+    private String createdAt;
+
+    @ColumnInfo
+    private String media = "";
+
+    @ColumnInfo
+    private long userId;
+
+    @Ignore
+    private User user;
 
     // Empty constructor for the Parceler library
     public Tweet() {
@@ -41,13 +60,13 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.id = jsonObject.getLong("id");
-        tweet.media = new ArrayList<>();
+        tweet.userId = tweet.user.getId();
 
         if (jsonObject.has("extended_entities")) {
             JSONObject entities = jsonObject.getJSONObject("extended_entities");
             JSONArray media = entities.getJSONArray("media");
-            for (int i = 0; i < media.length(); i++) {
-                tweet.media.add(((JSONObject) media.get(i)).getString("media_url_https"));
+            if (media.length() > 0) {
+                tweet.media = ((JSONObject) media.get(0)).getString("media_url_https");
             }
         }
 
@@ -108,7 +127,35 @@ public class Tweet {
         return id;
     }
 
-    public List<String> getMedia() {
+    public String getMedia() {
         return media;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
