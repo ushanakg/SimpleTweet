@@ -1,8 +1,8 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Matrix;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,10 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDetailsActivity;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -67,29 +69,42 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     // Defines a viewholder which binds a tweet's info to its layout
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ItemTweetBinding tweetView;
+        ItemTweetBinding tweetBinding;
 
         public ViewHolder(@NonNull View itemView) { //itemView is a representation of one row in the RecyclerView
             super(itemView);
 
-            tweetView = ItemTweetBinding.bind(itemView);
+            tweetBinding = ItemTweetBinding.bind(itemView);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Tweet tweet) {
-            tweetView.tvBody.setText(tweet.getBody());
-            tweetView.tvName.setText(tweet.getUser().getName());
-            tweetView.tvScreenName.setText("@" + tweet.getUser().getScreenName());
-            tweetView.tvRelativeTimeAgo.setText(tweet.getRelativeTimeAgo(context));
+            tweetBinding.tvBody.setText(tweet.getBody());
+            tweetBinding.tvName.setText(tweet.getUser().getName());
+            tweetBinding.tvScreenName.setText("@" + tweet.getUser().getScreenName());
+            tweetBinding.tvRelativeTimeAgo.setText(tweet.getRelativeTimeAgo(context));
             //load profile pic using Glide
-            Glide.with(context).load(tweet.getUser().getPublicImageUrl()).transform(new RoundedCorners(90)).into(tweetView.ivProfileImage);
+            Glide.with(context).load(tweet.getUser().getPublicImageUrl()).transform(new RoundedCorners(90)).into(tweetBinding.ivProfileImage);
 
             //load media
-            Glide.with(context).clear(tweetView.ivMedia);
+            Glide.with(context).clear(tweetBinding.ivMedia);
             List<String> tweetMedia = tweet.getMedia();
             if (tweetMedia.size() > 0) {
-                Glide.with(context).load(tweet.getMedia().get(0)).transform(new RoundedCorners(65)).into(tweetView.ivMedia);
+                Glide.with(context).load(tweet.getMedia().get(0)).transform(new RoundedCorners(65)).into(tweetBinding.ivMedia);
+            }
+        }
+
+        // on click open detailed view of tweet
+        @Override
+        public void onClick(View view) {
+            Log.d(TweetsAdapter.class.getSimpleName(), "Tweet clicked");
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Intent i = new Intent(context, TweetDetailsActivity.class);
+                i.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweetList.get(position)));
+                context.startActivity(i);
             }
         }
     }
