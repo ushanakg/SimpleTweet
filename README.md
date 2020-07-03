@@ -2,7 +2,7 @@
 
 **SimpleTweet** is an android app that allows a user to view their Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **X** hours spent in total
+Time spent: **22** hours spent in total
 
 ## User Stories
 
@@ -23,14 +23,14 @@ The following **required** functionality is completed:
 
 The following **stretch** features are implemented:
 
-* [ ] User is using **"Twitter branded" colors and styles**
+* [x] User is using **"Twitter branded" colors and styles**
 * [ ] User sees an **indeterminate progress indicator** when any background or network task is happening
 * [ ] User can **select "reply" from detail view to respond to a tweet**
   * [ ] User that wrote the original tweet is **automatically "@" replied in compose**
 * [x] User can tap a tweet to **open a detailed tweet view**
   * [ ] User can **take favorite (and unfavorite) or reweet** actions on a tweet
 * [x] User can view more tweets as they scroll with infinite pagination
-* [ ] Compose tweet functionality is build using modal overlay
+* [x] Compose tweet functionality is build using modal overlay
 * [x] User can **click a link within a tweet body**. The click will launch the web browser with relevant page opened.
 * [x] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.org/android/Using-Parceler).
 * [ ] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.org/android/Drawables#vector-drawables) where appropriate.
@@ -41,19 +41,19 @@ The following **stretch** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] Users can log out through an option in the toolbar menu.
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/ushanakg/SimpleTweet/blob/master/SimpleTweetWalkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+GIF created with [Kap](https://getkap.co/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Each individual feature was not so hard but the integration of many useful and convenient features caused problems. Because I implemented persistence, I wasn't able to debug an error that occurred when I tried to get the logged in user's info to populate name, screenName, and profileImage fields in the ComposeActivityDialogFragment. Implementing a CoordinatorLayout so the toolbar would hide when scrolling then raised formatting issues where my RecyclerView would not align with the bottom of the toolbar and instead overlapped, covering a tweet. Surprisingly, I missed out on some features I wanted to implement because branding and formatting took so much longer and was less fruitful than implementing new functionalities. For example, in the TimelineActivity I wanted the Twitter logo to be centered on my toolbar, however I tried 3-4 different methods and no matter what the logo would either be in the wrong place or not show up. Eventually I had to accept defeat. 
 
 ## Open-source libraries used
 
