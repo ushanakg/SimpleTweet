@@ -159,6 +159,10 @@ public class TimelineActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.compose) {
             showComposeDialog();
         }
+        if (item.getItemId() == R.id.logout) {
+            client.clearAccessToken();
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 

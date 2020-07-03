@@ -65,7 +65,7 @@ public class ComposeActivityFragment extends DialogFragment {
         this.user = Parcels.unwrap(getArguments().getParcelable("user"));
 
         client = TwitterApp.getRestClient(view.getContext());
-        
+
         //Set up character counter
         characterCounter = new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
